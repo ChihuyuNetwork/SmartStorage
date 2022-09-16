@@ -110,7 +110,7 @@ class PrivateStorage : JavaPlugin(), Listener {
                             if (inventory.contents.isNotEmpty()) {
                                 val newPage = Bukkit.createInventory(null, 54, "Open Storage  Page - ${StorageData.openStorageInv.indexOf(inventory).inc().inc()}")
 
-                                newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
+                                newPage.setItem(52, ItemStack(Material.RED_WOOL).apply {
                                     this.addUnsafeEnchantment(Enchantment.MENDING, 1)
                                     this.itemMeta = this.itemMeta?.apply {
                                         this.setDisplayName("Previous Page")

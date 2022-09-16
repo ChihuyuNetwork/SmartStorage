@@ -18,6 +18,7 @@ object CommandOpenStorage {
         .withAliases("os")
         .executesPlayer(
             PlayerCommandExecutor { sender, args ->
+                StorageData.openStorageInv.removeIf { StorageData.openStorageInv.indexOf(it) != 0 && it.contents.filterNotNull().isEmpty() }
                 StorageData.openStorageInv.forEach { inv ->
                     inv.setItem(52, ItemStack(Material.RED_WOOL).apply {
                         this.addUnsafeEnchantment(Enchantment.MENDING, 1)
