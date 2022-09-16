@@ -1,0 +1,8 @@
+name: PrivateStorage
+version: '1.0.0'
+api-version: 1.19
+depend: [CommandAPI]
+main: love.chihuyu.PrivateStorage
+authors: [ Hirosuke ]
+commands:
+permissions:
