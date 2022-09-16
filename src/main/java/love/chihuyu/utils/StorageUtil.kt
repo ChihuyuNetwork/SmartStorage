@@ -10,12 +10,15 @@ import java.util.UUID
 
 object StorageUtil {
 
+    fun List<ItemStack>.excludePageButton(): List<ItemStack> {
+        return this.filterNot { item -> (item.type == Material.LIME_WOOL && item.itemMeta?.hasEnchants() == true) || (item.type == Material.RED_WOOL && item.itemMeta?.hasEnchants() == true) }
+    }
+
     fun updateStorageInfos() {
         StorageData.privateStorages.clear()
         StorageData.privateStorageInv.forEach { (info, invs) ->
             val items = mutableListOf<ItemStack>()
-            invs.forEach { items.addAll(it.contents.filterNotNull()
-                .filterNot { item -> (item.type == Material.LIME_WOOL && item.itemMeta?.hasEnchants() == true) || (item.type == Material.RED_WOOL && item.itemMeta?.hasEnchants() == true) }) }
+            invs.forEach { items.addAll(it.contents.filterNotNull().excludePageButton()) }
 
             StorageData.privateStorages.add(
                 StorageInfo(

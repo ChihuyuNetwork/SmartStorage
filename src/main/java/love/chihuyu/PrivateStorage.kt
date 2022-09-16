@@ -32,11 +32,17 @@ class PrivateStorage : JavaPlugin(), Listener {
         server.pluginManager.registerEvents(this, this)
 
         StorageData.import()
-        StorageData.openStorage.forEach { StorageData.openStorageInv.addItem(it) }
+
+        StorageData.openStorage.chunked(52).forEachIndexed { index, itemStacks ->
+            val inv = Bukkit.createInventory(null, 54, "Open Storage  Page - ${index.inc()}")
+            itemStacks.forEach { inv.addItem(it) }
+            StorageData.openStorageInv.add(inv)
+        }
+
         StorageData.privateStorages.forEach {
-            it.items.chunked(52).forEach { chunkedItems ->
-                val inv = Bukkit.createInventory(null, 54, "${it.name} (${Bukkit.getOfflinePlayer(it.owner).name}) Page - ${it.items.chunked(52).indexOf(chunkedItems).inc()}")
-                chunkedItems.forEach { item -> inv.addItem(item) }
+            it.items.chunked(52).forEachIndexed { index, itemStacks ->
+                val inv = Bukkit.createInventory(null, 54, "${it.name} (${Bukkit.getOfflinePlayer(it.owner).name}) Page - ${index.inc()}")
+                itemStacks.forEach { item -> inv.addItem(item) }
                 StorageData.privateStorageInv.getOrPut(it) { mutableListOf() }.add(inv)
             }
         }
@@ -57,34 +63,65 @@ class PrivateStorage : JavaPlugin(), Listener {
         val player = event.whoClicked as Player
         fun invData() = StorageUtil.getStorageByInventory(inventory)?.second
 
-        if (invData() == null || item.itemMeta?.hasEnchants() == false) return
-        StorageUtil.getStorageByInventory(inventory)?.second?.removeIf { it.contents.isEmpty() }
-        when (item.type) {
-            Material.LIME_WOOL -> {
-                player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
-                if (invData()!!.indexOf(inventory).inc() == invData()!!.size) {
-                    if (inventory.contents.isNotEmpty()) {
-                        val info = StorageUtil.getStorageByInventory(inventory)!!.first
-                        val newPage = Bukkit.createInventory(null, 54, "${info.name} (${Bukkit.getOfflinePlayer(info.owner).name}) Page - ${invData()!!.indexOf(inventory).inc().inc()}")
-                        newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
-                            this.addUnsafeEnchantment(Enchantment.MENDING, 1)
-                            this.itemMeta = this.itemMeta?.apply {
-                                this.setDisplayName("Previous Page")
-                                this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        if (item.itemMeta?.hasEnchants() == true) {
+            if (invData() != null) {
+                StorageUtil.getStorageByInventory(inventory)?.second?.removeIf { it.contents.isEmpty() }
+                when (item.type) {
+                    Material.LIME_WOOL -> {
+                        player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
+                        if (invData()!!.indexOf(inventory).inc() == invData()!!.size) {
+                            if (inventory.contents.isNotEmpty()) {
+                                val info = StorageUtil.getStorageByInventory(inventory)!!.first
+                                val newPage = Bukkit.createInventory(null, 54, "${info.name} (${Bukkit.getOfflinePlayer(info.owner).name}) Page - ${invData()!!.indexOf(inventory).inc().inc()}")
+                                newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
+                                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+                                    this.itemMeta = this.itemMeta?.apply {
+                                        this.setDisplayName("Previous Page")
+                                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                    }
+                                })
+                                StorageUtil.getStorageByInventory(inventory)?.second?.add(newPage)
                             }
-                        })
-                        StorageUtil.getStorageByInventory(inventory)?.second?.add(newPage)
+                        }
+                        player.openInventory(invData()!![invData()!!.indexOf(inventory).inc()])
                     }
+                    Material.RED_WOOL -> {
+                        player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
+                        val index = if (invData()!!.indexOf(inventory).dec() < 0) 0 else invData()!!.indexOf(inventory).dec()
+                        player.openInventory(invData()!![index % invData()!!.size])
+                    }
+                    else -> return
                 }
-                player.openInventory(invData()!![invData()!!.indexOf(inventory).inc()])
+                event.isCancelled = true
+            } else if (inventory in StorageData.openStorageInv) {
+                when (item.type) {
+                    Material.LIME_WOOL -> {
+                        player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
+                        if (StorageData.openStorageInv.indexOf(inventory).inc() == StorageData.openStorageInv.size) {
+                            if (inventory.contents.isNotEmpty()) {
+                                val newPage = Bukkit.createInventory(null, 54, "Open Storage  Page - ${StorageData.openStorageInv.indexOf(inventory).inc().inc()}")
+                                newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
+                                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+                                    this.itemMeta = this.itemMeta?.apply {
+                                        this.setDisplayName("Previous Page")
+                                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                    }
+                                })
+                                StorageData.openStorageInv.add(newPage)
+                            }
+                        }
+                        player.openInventory(StorageData.openStorageInv[StorageData.openStorageInv.indexOf(inventory).inc()])
+                    }
+                    Material.RED_WOOL -> {
+                        player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
+                        val index = if (StorageData.openStorageInv.indexOf(inventory).dec() < 0) 0 else StorageData.openStorageInv.indexOf(inventory).dec()
+                        player.openInventory(StorageData.openStorageInv[index % StorageData.openStorageInv.size])
+                    }
+                    else -> return
+                }
+                event.isCancelled = true
             }
-            Material.RED_WOOL -> {
-                player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
-                val index = if(invData()!!.indexOf(inventory).dec() < 0) 0 else invData()!!.indexOf(inventory).dec()
-                player.openInventory(invData()!![index % invData()!!.size])
-            }
-            else -> return
         }
-        event.isCancelled = true
+
     }
 }

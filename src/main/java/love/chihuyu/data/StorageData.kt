@@ -4,6 +4,7 @@ import com.google.gson.*
 import love.chihuyu.PrivateStorage.Companion.plugin
 import love.chihuyu.utils.ItemUtil
 import love.chihuyu.utils.StorageUtil
+import love.chihuyu.utils.StorageUtil.excludePageButton
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.inventory.Inventory
@@ -16,7 +17,7 @@ object StorageData {
     private val DATAFILE = File(plugin.dataFolder, "data.json")
 
     val openStorage = mutableListOf<ItemStack>()
-    val openStorageInv = Bukkit.createInventory(null, 54, "Open Storage")
+    val openStorageInv = mutableListOf<Inventory>()
     val privateStorageInv = mutableMapOf<StorageInfo, MutableList<Inventory>>()
     val privateStorages = mutableListOf<StorageInfo>()
 
@@ -33,7 +34,9 @@ object StorageData {
         if (DATAFILE.exists()) DATAFILE.createNewFile()
         val json = JsonObject()
 
-        json.addProperty("openStorage", ItemUtil.itemStackArrayToBase64(openStorageInv.contents.filterNotNull().toTypedArray()))
+        val openItems = mutableListOf<ItemStack>()
+        openStorageInv.forEach { openItems.addAll(it.contents.filterNotNull().excludePageButton()) }
+        json.addProperty("openStorage", ItemUtil.itemStackArrayToBase64(openItems.toTypedArray()))
 
         StorageUtil.updateStorageInfos()
 
@@ -60,17 +63,15 @@ object StorageData {
             return
         }
 
-        val openStorage = json.getAsJsonPrimitive("openStorage")
+        val openStorage = json.getAsJsonPrimitive("openStorage").asString
 
         try {
-            this.openStorage.addAll(ItemUtil.itemStackArrayFromBase64(openStorage.asString)!!.toList().filterNotNull())
+            this.openStorage.addAll(ItemUtil.itemStackArrayFromBase64(openStorage)!!.toList().filterNotNull())
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
         val privateStorages = json.getAsJsonObject("privateStorages")
-
-        plugin.logger.info(privateStorages.toString())
 
         try {
             privateStorages.entrySet().forEach { storage ->
@@ -78,7 +79,6 @@ object StorageData {
                 val name = obj.getAsJsonPrimitive("name").asString
                 val owner = UUID.fromString(obj.getAsJsonPrimitive("owner").asString)
                 val items = ItemUtil.itemStackArrayFromBase64(obj.getAsJsonPrimitive("items").asString)!!.filterNotNull().toMutableList()
-                plugin.logger.info(items.map { it.amount }.toString())
                 val players = obj.getAsJsonArray("members").map { UUID.fromString(it.asString) }.toMutableSet()
                 this.privateStorages.add(StorageInfo(name, owner, items, players))
             }
@@ -87,9 +87,5 @@ object StorageData {
             return
         }
         plugin.logger.info("Data imported successfully.")
-    }
-
-    fun filterPrivateStorages(sender: CommandSender): List<StorageInfo> {
-        return privateStorages.filter { plugin.server.getPlayer(sender.name)?.uniqueId in it.members }
     }
 }
