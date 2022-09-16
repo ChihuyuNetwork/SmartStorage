@@ -73,13 +73,22 @@ class PrivateStorage : JavaPlugin(), Listener {
                             if (inventory.contents.isNotEmpty()) {
                                 val info = StorageUtil.getStorageByInventory(inventory)!!.first
                                 val newPage = Bukkit.createInventory(null, 54, "${info.name} (${Bukkit.getOfflinePlayer(info.owner).name}) Page - ${invData()!!.indexOf(inventory).inc().inc()}")
-                                newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
+
+                                newPage.setItem(52, ItemStack(Material.RED_WOOL).apply {
                                     this.addUnsafeEnchantment(Enchantment.MENDING, 1)
                                     this.itemMeta = this.itemMeta?.apply {
                                         this.setDisplayName("Previous Page")
                                         this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                     }
                                 })
+                                newPage.setItem(53, ItemStack(Material.LIME_WOOL).apply {
+                                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+                                    this.itemMeta = this.itemMeta?.apply {
+                                        this.setDisplayName("Next Page")
+                                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                    }
+                                })
+
                                 StorageUtil.getStorageByInventory(inventory)?.second?.add(newPage)
                             }
                         }
@@ -100,6 +109,7 @@ class PrivateStorage : JavaPlugin(), Listener {
                         if (StorageData.openStorageInv.indexOf(inventory).inc() == StorageData.openStorageInv.size) {
                             if (inventory.contents.isNotEmpty()) {
                                 val newPage = Bukkit.createInventory(null, 54, "Open Storage  Page - ${StorageData.openStorageInv.indexOf(inventory).inc().inc()}")
+
                                 newPage.setItem(53, ItemStack(Material.RED_WOOL).apply {
                                     this.addUnsafeEnchantment(Enchantment.MENDING, 1)
                                     this.itemMeta = this.itemMeta?.apply {
@@ -107,6 +117,14 @@ class PrivateStorage : JavaPlugin(), Listener {
                                         this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                     }
                                 })
+                                newPage.setItem(53, ItemStack(Material.LIME_WOOL).apply {
+                                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+                                    this.itemMeta = this.itemMeta?.apply {
+                                        this.setDisplayName("Next Page")
+                                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                    }
+                                })
+
                                 StorageData.openStorageInv.add(newPage)
                             }
                         }
