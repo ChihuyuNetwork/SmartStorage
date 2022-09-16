@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import love.chihuyu.data.StorageData
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
@@ -34,6 +35,7 @@ object CommandOpenStorage {
                     })
                 }
 
+                if (StorageData.openStorageInv.size < 1) StorageData.openStorageInv.add(Bukkit.createInventory(null, 54, "Open Storage  Page - 1"))
                 sender.openInventory(StorageData.openStorageInv[0])
             }
         )
