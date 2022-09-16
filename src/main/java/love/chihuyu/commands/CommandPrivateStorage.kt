@@ -1,6 +1,7 @@
 package love.chihuyu.commands
 
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
@@ -19,6 +20,8 @@ import java.util.concurrent.CompletableFuture
 object CommandPrivateStorage {
 
     val main = CommandAPICommand("privatestorage")
+        .withPermission("privatestorage.ps")
+        .withPermission(CommandPermission.NONE)
         .withAliases("ps")
         .withArguments(
             StringArgument("storageName").replaceSuggestions(

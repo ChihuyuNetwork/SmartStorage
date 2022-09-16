@@ -1,6 +1,7 @@
 package love.chihuyu.commands
 
 import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
@@ -21,6 +22,8 @@ object CommandPsedit {
     val main = CommandAPICommand("psedit")
         .withSubcommands(
             CommandAPICommand("create")
+                .withPermission("privatestorage.create")
+                .withPermission(CommandPermission.NONE)
                 .withArguments(StringArgument("name"))
                 .executesPlayer(
                     PlayerCommandExecutor { sender, args ->
@@ -37,6 +40,8 @@ object CommandPsedit {
                     }
                 ),
             CommandAPICommand("delete")
+                .withPermission("privatestorage.delete")
+                .withPermission(CommandPermission.NONE)
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
@@ -64,6 +69,8 @@ object CommandPsedit {
                     }
                 ),
             CommandAPICommand("addmember")
+                .withPermission("privatestorage.addmember")
+                .withPermission(CommandPermission.NONE)
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
@@ -99,6 +106,8 @@ object CommandPsedit {
                     }
                 ),
             CommandAPICommand("removemember")
+                .withPermission("privatestorage.removemember")
+                .withPermission(CommandPermission.NONE)
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
@@ -134,6 +143,8 @@ object CommandPsedit {
                     }
                 ),
             CommandAPICommand("save")
+                .withPermission("privatestorage.save")
+                .withPermission(CommandPermission.OP)
                 .executes(
                     CommandExecutor { sender, args ->
                         StorageData.save()
@@ -141,6 +152,8 @@ object CommandPsedit {
                     }
                 ),
             CommandAPICommand("list")
+                .withPermission("privatestorage.list")
+                .withPermission(CommandPermission.NONE)
                 .executesPlayer(
                     PlayerCommandExecutor { sender, args ->
                         sender.sendMessage(
