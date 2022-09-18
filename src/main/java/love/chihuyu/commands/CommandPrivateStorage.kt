@@ -40,21 +40,6 @@ object CommandPrivateStorage {
                 val name = args[0] as String
                 val owner = (args[1] as OfflinePlayer).uniqueId
 
-                val nextPage = ItemStack(Material.LIME_WOOL).apply {
-                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
-                    this.itemMeta = this.itemMeta?.apply {
-                        this.setDisplayName("Next Page")
-                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    }
-                }
-                val prevPage = ItemStack(Material.RED_WOOL).apply {
-                    this.addUnsafeEnchantment(Enchantment.MENDING, 1)
-                    this.itemMeta = this.itemMeta?.apply {
-                        this.setDisplayName("Previous Page")
-                        this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    }
-                }
-
                 StorageUtil.removeEmptyInventory(owner, name)
                 val inv = StorageUtil.getExactStorageInventory(owner, name)?.second
 
@@ -63,8 +48,8 @@ object CommandPrivateStorage {
                     sender.sendMessage("${ChatColor.RED}Storage not found.")
                     return@PlayerCommandExecutor
                 }
-                inv.forEach { it.setItem(52, prevPage) }
-                inv.forEach { it.setItem(53, nextPage) }
+                inv.forEach { it.setItem(52, StorageUtil.previousPageButton) }
+                inv.forEach { it.setItem(53, StorageUtil.nextPageButton) }
                 sender.openInventory(inv[0])
             }
         )

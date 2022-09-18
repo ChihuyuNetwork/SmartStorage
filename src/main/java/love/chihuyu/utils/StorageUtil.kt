@@ -4,11 +4,29 @@ import love.chihuyu.PrivateStorage.Companion.plugin
 import love.chihuyu.data.StorageData
 import love.chihuyu.data.StorageInfo
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.UUID
 
 object StorageUtil {
+
+    val nextPageButton = ItemStack(Material.LIME_WOOL).apply {
+        this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+        this.itemMeta = this.itemMeta?.apply {
+            this.setDisplayName("Next Page")
+            this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        }
+    }
+
+    val previousPageButton = ItemStack(Material.RED_WOOL).apply {
+        this.addUnsafeEnchantment(Enchantment.MENDING, 1)
+        this.itemMeta = this.itemMeta?.apply {
+            this.setDisplayName("Previous Page")
+            this.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+        }
+    }
 
     fun List<ItemStack>.excludePageButton(): List<ItemStack> {
         return this.filterNot { item -> (item.type == Material.LIME_WOOL && item.itemMeta?.hasEnchants() == true) || (item.type == Material.RED_WOOL && item.itemMeta?.hasEnchants() == true) }
