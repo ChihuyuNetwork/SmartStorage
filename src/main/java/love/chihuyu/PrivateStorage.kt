@@ -4,7 +4,9 @@ import love.chihuyu.commands.CommandOpenStorage
 import love.chihuyu.commands.CommandPrivateStorage
 import love.chihuyu.commands.CommandPsedit
 import love.chihuyu.data.StorageData
-import love.chihuyu.utils.StorageUtil
+import love.chihuyu.listeners.ClickInventoryEventListener
+import love.chihuyu.utils.StorageUtils
+import love.chihuyu.utils.runTaskTimer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -29,7 +31,7 @@ class PrivateStorage : JavaPlugin(), Listener {
     }
 
     override fun onEnable() {
-        server.pluginManager.registerEvents(this, this)
+        server.pluginManager.registerEvents(ClickInventoryEventListener, this)
 
         StorageData.import()
 
@@ -50,6 +52,11 @@ class PrivateStorage : JavaPlugin(), Listener {
         CommandPsedit.main.register()
         CommandPrivateStorage.main.register()
         CommandOpenStorage.main.register()
+
+        // NOTE: 20 ticks = 1 second
+        runTaskTimer(0, /* intervalTicks = */ 1200) {
+            StorageData.save()
+        }
     }
 
     override fun onDisable() {

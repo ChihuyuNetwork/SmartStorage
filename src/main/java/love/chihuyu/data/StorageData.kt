@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.io.*
 import java.util.UUID
+import kotlin.system.measureTimeMillis
 
 object StorageData {
 
@@ -30,38 +31,15 @@ object StorageData {
         if (!DATAFILE.exists()) DATAFILE.createNewFile()
     }
 
-    fun save() {
-        if (DATAFILE.exists()) DATAFILE.createNewFile()
-        val json = JsonObject()
-
-        val openItems = mutableListOf<ItemStack>()
-        openStorageInv.forEach { openItems.addAll(it.contents.filterNotNull().excludePageButton()) }
-        json.addProperty("openStorage", ItemUtil.itemStackArrayToBase64(openItems.toTypedArray()))
-
-        StorageUtil.updateStorageInfos()
-
-        json.add(
-            "privateStorages",
-            JsonObject().apply {
-                privateStorages.forEach { info ->
-                    this.add(info.name, info.toJson())
-                }
-            }
-        )
-
-        val writer = PrintWriter(BufferedWriter(FileWriter(DATAFILE)))
-        writer.println(GsonBuilder().setPrettyPrinting().create().toJson(json))
-        writer.close()
-        plugin.logger.info("Data saved successfully.")
+    @Throws(
+        FileNotFoundException::class,
+        JsonParseException::class,
+        JsonSyntaxException::class,
+        IllegalStateException::class
+    )
+    private fun loadJson(): JsonObject {
+        return JsonParser.parseString(FileReader(DATAFILE).readText()).asJsonObject
     }
-
-    fun import() {
-        val json = try {
-            JsonParser.parseString(FileReader(DATAFILE).readText()).asJsonObject
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return
-        }
 
         val openStorage = json.getAsJsonPrimitive("openStorage").asString
 

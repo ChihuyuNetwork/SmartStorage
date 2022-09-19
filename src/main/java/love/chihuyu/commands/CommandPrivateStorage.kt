@@ -23,18 +23,24 @@ object CommandPrivateStorage {
         .withPermission("privatestorage.ps")
         .withPermission(CommandPermission.NONE)
         .withAliases("ps")
-        .withArguments(
-            StringArgument("storageName").replaceSuggestions(
-                ArgumentSuggestions.strings { info ->
-                    CompletableFuture.supplyAsync { StorageUtil.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.name }.toTypedArray() }.get()
-                }
-            ),
-            OfflinePlayerArgument("owner").replaceSuggestions(
-                ArgumentSuggestions.strings { info ->
-                    CompletableFuture.supplyAsync { StorageUtil.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.owner).name }.toTypedArray() }.get()
-                }
-            )
-        )
+//        .withArguments(
+//            StringArgument("storageName").replaceSuggestions(
+//                ArgumentSuggestions.strings { info ->
+//                    CompletableFuture.supplyAsync {
+//                        StorageUtils.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId)
+//                            .map { it.key.storageName }.toTypedArray()
+//                    }.get()
+//                }
+//            ),
+//            OfflinePlayerArgument("owner").replaceSuggestions(
+//                ArgumentSuggestions.strings { info ->
+//                    CompletableFuture.supplyAsync {
+//                        StorageUtils.getDuplicatedStorages(info.previousArgs[0] as String)
+//                            .map { Bukkit.getOfflinePlayer(it.first.ownerUUID).name }.toTypedArray()
+//                    }.get()
+//                }
+//            )
+//        )
         .executesPlayer(
             PlayerCommandExecutor { sender, args ->
                 val name = args[0] as String
