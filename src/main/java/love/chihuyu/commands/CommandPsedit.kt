@@ -4,13 +4,12 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
-import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import love.chihuyu.data.StorageData
 import love.chihuyu.data.StorageInfo
-import love.chihuyu.utils.StorageUtil
+import love.chihuyu.utils.StorageUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -28,14 +27,14 @@ object CommandPsedit {
                 .executesPlayer(
                     PlayerCommandExecutor { sender, args ->
                         val name = args[0] as String
-                        if (StorageUtil.getStoragesByOwner(sender.uniqueId).any { it.key.name == name }) {
+                        if (StorageUtils.getStoragesByOwner(sender.uniqueId).any { it.key.storageName == name }) {
                             sender.sendMessage("The storage already created in yours.")
                             return@PlayerCommandExecutor
                         }
-                        val info = StorageInfo(name, sender.uniqueId, mutableListOf(), mutableSetOf(sender.uniqueId))
-                        val inv = Bukkit.createInventory(null, 54, "$name (${Bukkit.getOfflinePlayer(info.owner).name}) Page - 1")
-                        StorageData.privateStorageInv[info] = mutableListOf(inv)
-                        StorageUtil.updateStorageInfos()
+                        val info = StorageInfo(sender.uniqueId, name, mutableListOf(), mutableSetOf(sender.uniqueId))
+                        val inv = Bukkit.createInventory(null, 54, "$name (${Bukkit.getOfflinePlayer(info.ownerUUID).name}) Page - 1")
+                        StorageData.privateStorageFullDataMap[info] = mutableListOf(inv)
+                        StorageUtils.updateStorageInfos()
                         sender.sendMessage("Storage created as ${ChatColor.UNDERLINE}$name${ChatColor.RESET}.")
                     }
                 ),
@@ -45,12 +44,12 @@ object CommandPsedit {
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.storageName }.toTypedArray() }.get()
                         }
                     ),
                     OfflinePlayerArgument("owner").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.owner).name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.ownerUUID).name }.toTypedArray() }.get()
                         }
                     )
                 )
@@ -58,13 +57,13 @@ object CommandPsedit {
                     PlayerCommandExecutor { sender, args ->
                         val name = args[0] as String
                         val owner = (args[1] as OfflinePlayer).uniqueId
-                        val storage = StorageUtil.getExactStorage(owner, name)
+                        val storage = StorageUtils.getStorageInfo(owner, name)
                         if (storage == null) {
                             sendErrorNotFound(sender)
                             return@PlayerCommandExecutor
                         }
-                        StorageData.privateStorageInv.remove(storage)
-                        StorageUtil.updateStorageInfos()
+                        StorageData.privateStorageFullDataMap.remove(storage)
+                        StorageUtils.updateStorageInfos()
                         sender.sendMessage("The storage ${ChatColor.UNDERLINE}$name${ChatColor.RESET} is deleted.")
                     }
                 ),
@@ -74,12 +73,12 @@ object CommandPsedit {
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.storageName }.toTypedArray() }.get()
                         }
                     ),
                     OfflinePlayerArgument("owner").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.owner).name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.ownerUUID).name }.toTypedArray() }.get()
                         }
                     ),
                     OfflinePlayerArgument("member").replaceSuggestions(ArgumentSuggestions.strings {
@@ -91,13 +90,13 @@ object CommandPsedit {
                         val name = args[0] as String
                         val owner = (args[1] as OfflinePlayer).uniqueId
                         val member = args[2] as OfflinePlayer
-                        val storage = StorageUtil.getExactStorage(owner, name)
+                        val storage = StorageUtils.getStorageInfo(owner, name)
                         if (storage == null) {
                             sendErrorNotFound(sender)
                             return@PlayerCommandExecutor
                         }
-                        val result = storage.members.add(member.uniqueId)
-                        StorageUtil.updateStorageInfos()
+                        val result = storage.memberUUIDs.add(member.uniqueId)
+                        StorageUtils.updateStorageInfos()
                         if (result) {
                             sender.sendMessage("The member successfuly added to ${ChatColor.UNDERLINE}$name${ChatColor.RESET}.")
                         } else {
@@ -111,12 +110,12 @@ object CommandPsedit {
                 .withArguments(
                     StringArgument("storageName").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getJoinedStorages(Bukkit.getOfflinePlayer(info.sender.name).uniqueId).map { it.key.storageName }.toTypedArray() }.get()
                         }
                     ),
                     OfflinePlayerArgument("owner").replaceSuggestions(
                         ArgumentSuggestions.strings { info ->
-                            CompletableFuture.supplyAsync { StorageUtil.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.owner).name }.toTypedArray() }.get()
+                            CompletableFuture.supplyAsync { StorageUtils.getDuplicatedStorages(info.previousArgs[0] as String).map { Bukkit.getOfflinePlayer(it.first.ownerUUID).name }.toTypedArray() }.get()
                         }
                     ),
                     OfflinePlayerArgument("member").replaceSuggestions(ArgumentSuggestions.strings {
@@ -128,13 +127,13 @@ object CommandPsedit {
                         val name = args[0] as String
                         val owner = (args[1] as OfflinePlayer).uniqueId
                         val member = args[2] as OfflinePlayer
-                        val storage = StorageUtil.getExactStorage(owner, name)
+                        val storage = StorageUtils.getStorageInfo(owner, name)
                         if (storage == null) {
                             sendErrorNotFound(sender)
                             return@PlayerCommandExecutor
                         }
-                        val result = storage.members.remove(member.uniqueId)
-                        StorageUtil.updateStorageInfos()
+                        val result = storage.memberUUIDs.remove(member.uniqueId)
+                        StorageUtils.updateStorageInfos()
                         if (result) {
                             sender.sendMessage("The member successfuly removed from ${ChatColor.UNDERLINE}$name${ChatColor.RESET}.")
                         } else {
@@ -157,9 +156,9 @@ object CommandPsedit {
                 .executesPlayer(
                     PlayerCommandExecutor { sender, args ->
                         sender.sendMessage(
-                            "=== Your Storages ===\n" + StorageUtil.getJoinedStorages(sender.uniqueId).keys.joinToString(
+                            "=== Your Storages ===\n" + StorageUtils.getJoinedStorages(sender.uniqueId).keys.joinToString(
                                 "\n"
-                            ) { "${ChatColor.GOLD}${it.name} (${Bukkit.getOfflinePlayer(it.owner).name})" }
+                            ) { "${ChatColor.GOLD}${it.storageName} (${Bukkit.getOfflinePlayer(it.ownerUUID).name})" }
                         )
                     }
                 )

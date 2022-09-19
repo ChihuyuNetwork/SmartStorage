@@ -7,14 +7,10 @@ import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import love.chihuyu.data.StorageData
-import love.chihuyu.utils.StorageUtil
+import love.chihuyu.utils.StorageUtils
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.OfflinePlayer
-import org.bukkit.enchantments.Enchantment
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
 import java.util.concurrent.CompletableFuture
 
 object CommandPrivateStorage {
@@ -42,21 +38,32 @@ object CommandPrivateStorage {
 //            )
 //        )
         .executesPlayer(
-            PlayerCommandExecutor { sender, args ->
-                val name = args[0] as String
-                val owner = (args[1] as OfflinePlayer).uniqueId
+            PlayerCommandExecutor { sender, _ ->
+                val guiName = "Private Storages"
+                val gui = Bukkit.createInventory(null, 54, guiName)
 
-                StorageUtil.removeEmptyInventory(owner, name)
-                val inv = StorageUtil.getExactStorageInventory(owner, name)?.second
+//                val storageName = args[0] as String
+//                val ownerUUID = (args[1] as OfflinePlayer).uniqueId
 
-                if (inv == null) {
-                    sender.sendMessage(StorageData.privateStorageInv.toString())
-                    sender.sendMessage("${ChatColor.RED}Storage not found.")
-                    return@PlayerCommandExecutor
+//                StorageUtils.removeEmptyInventory(ownerUUID, storageName)
+                val storages = StorageUtils.getJoinedStorages(sender.uniqueId)
+
+//                val inventories = StorageUtils.getStorageInventories(ownerUUID, storageName)
+//                if (inventories == null) {
+//                    sender.sendMessage(StorageData.privateStorageFullDataMap.toString())
+//                    sender.sendMessage("${ChatColor.RED}Storage not found.")
+//                    return@PlayerCommandExecutor
+//                }
+                storages.keys.forEachIndexed { index, storageInfo ->
+                    gui.setItem(index, StorageUtils.getStorageHead(storageInfo))
                 }
-                inv.forEach { it.setItem(52, StorageUtil.previousPageButton) }
-                inv.forEach { it.setItem(53, StorageUtil.nextPageButton) }
-                sender.openInventory(inv[0])
+
+//                inventories.forEach {
+//                    it.setItem(52, StorageUtils.previousPageButton)
+//                    it.setItem(53, StorageUtils.nextPageButton)
+//                }
+
+                sender.openInventory(gui)
             }
         )
 }
