@@ -1,8 +1,8 @@
-name: PrivateStorage
-version: '1.1.0'
+name: SmartStorage
+version: '2.0.0'
 api-version: 1.19
 depend: [CommandAPI]
-main: love.chihuyu.PrivateStorage
-authors: [ Hirosuke ]
+main: love.chihuyu.SmartStorage
+authors: [ "Hirosuke", "Tenzyu Masuda", "Yuki Hiragino" ]
 commands:
 permissions:

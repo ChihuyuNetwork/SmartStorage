@@ -1,53 +1,59 @@
-# PrivateStorage
+# SmartStorage
 
 ## Commands
 
-* `/openstorage[os]`
-open public storage.
+* `/serverstorage[ss]`
+open server storage.
 
-* `/privatestorage[ps] <storageName> <owner>`
-open private storage.
+* `/personalstorage[ps]`
+open your private storage.
 
-* `/psedit create <storageName>`
-create new storage.
+* `/groupstorage[gs]`
+open group storage.
 
-* `/psedit delete <storageName> <owner>`
-delete specify storage.
+* `/gsedit[gse] create <storageName>`
+create new group storage.
 
-* `/psedit addmember <storageName> <owner> <member>`
+* `/gsedit[gse] delete <storageName>`
+delete group storage that you created. (Don't forget to collect items in storage before delete.)
+
+* `/gsedit[gse] addmember <storageName> <owner> <member>`
 add `member` to specify storage's member.
 
-* `/psedit removemember <storageName> <owner> <member>`
+* `/gsedit[gse] removemember <storageName> <owner> <member>`
 remove `member` from specify storage's member.
 
-* `/psedit list`
-show joined storages.
+* `/gsedit[gse] list`
+show joined group storages.
 
-* `/psedit save`
-save storage data to file.
+* `/smartstorage save`
+save storage data to file. (OP only)
 
 ## Permissions
 
-* `privatestorage.openstorage`
-use /openstorage
+* `smartstorage.serverstorage`
+use /serverstorage
 
-* `privatestorage.privatestorage`
-use /privatestorage
+* `smartstorage.personalstorage`
+use /personalstorage
 
-* `privatestorage.create`
-use /psedit create
+* `smartstorage.groupstorage`
+use /groupstorage
 
-* `privatestorage.delete`
-use /psedit delete
+* `groupstorageedit.create`
+use /gsedit create
 
-* `privatestorage.addmember`
-use /psedit addmember
+* `groupstorageedit.delete`
+use /gsedit delete
 
-* `privatestorage.removemember`
-use /psedit removemember
+* `groupstorageedit.addmember`
+use /gsedit addmember
 
-* `privatestorage.list`
-use /psedit list
+* `groupstorageedit.removemember`
+use /gsedit removemember
 
-* `privatestorage.save`
-use /psedit save
+* `groupstorageedit.list`
+use /gsedit list
+
+* `smartstorage.save`
+use /smartstorage save
