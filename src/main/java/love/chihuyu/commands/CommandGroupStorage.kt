@@ -12,7 +12,6 @@ object CommandGroupStorage {
 
     val main: CommandAPICommand = CommandAPICommand("groupstorage")
         .withAliases("gs")
-        .withPermission(CommandPermission.NONE)
         .withPermission("smartstorage.groupstorage")
         .executesPlayer(
             PlayerCommandExecutor { sender, _ ->

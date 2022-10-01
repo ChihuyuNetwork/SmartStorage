@@ -14,7 +14,6 @@ object CommandServerStorage {
 
     val main: CommandAPICommand = CommandAPICommand("serverstorage")
         .withAliases("ss")
-        .withPermission(CommandPermission.NONE)
         .withPermission("smartstorage.serverstorage")
         .executesPlayer(
             PlayerCommandExecutor { sender, _ ->

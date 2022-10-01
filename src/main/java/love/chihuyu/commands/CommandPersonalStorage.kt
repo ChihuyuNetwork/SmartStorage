@@ -14,7 +14,6 @@ object CommandPersonalStorage {
 
     val main: CommandAPICommand = CommandAPICommand("personalstorage")
         .withAliases("ps")
-        .withPermission(CommandPermission.NONE)
         .withPermission("smartstorage.personalstorage")
         .executesPlayer(
             PlayerCommandExecutor { sender, _ ->

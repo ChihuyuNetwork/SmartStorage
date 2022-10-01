@@ -18,6 +18,7 @@ object CommandGroupStorageEdit {
 
     val main: CommandAPICommand = CommandAPICommand("groupstorageedit")
         .withAliases("gse", "gsedit")
+        .withPermission("smartstorage.groupstorageedit")
         .withSubcommands(
             createCommand(),
             deleteCommand(),
@@ -62,8 +63,7 @@ object CommandGroupStorageEdit {
         })
 
     private fun createCommand(): CommandAPICommand = CommandAPICommand("create")
-        .withPermission(CommandPermission.NONE)
-        .withPermission("groupstorageedit.create")
+        .withPermission("smartstorage.groupstorageedit.create")
         .withArguments(StringArgument("storageName"))
         .executesPlayer(
             PlayerCommandExecutor { sender, args ->
@@ -91,9 +91,9 @@ object CommandGroupStorageEdit {
         )
 
     private fun deleteCommand(): CommandAPICommand = CommandAPICommand("delete")
-        .withPermission(CommandPermission.NONE)
-        .withPermission("groupstorageedit.delete")
-        .withArguments(StringArgument("storageNameThatYouOwn").replaceSuggestions(
+        .withPermission("smartstorage.groupstorageedit.delete")
+        .withArguments(StringArgument("storageNameThatYouOwn")
+            .replaceSuggestions(
             ArgumentSuggestions.strings { info ->
                 CompletableFuture.supplyAsync {
                     StorageManager.storages.filter {
@@ -133,8 +133,7 @@ object CommandGroupStorageEdit {
         )
 
     private fun addMemberCommand(): CommandAPICommand = CommandAPICommand("addmember")
-        .withPermission(CommandPermission.NONE)
-        .withPermission("groupstorageedit.addmember")
+        .withPermission("smartstorage.groupstorageedit.addmember")
         .withArguments(
             argMemberStorageName(),
             argOwnerName(),
@@ -171,8 +170,7 @@ object CommandGroupStorageEdit {
         )
 
     private fun removeMemberCommand(): CommandAPICommand = CommandAPICommand("removemember")
-        .withPermission(CommandPermission.NONE)
-        .withPermission("groupstorageedit.removemember")
+        .withPermission("smartstorage.groupstorageedit.removemember")
         .withArguments(
             argMemberStorageName(),
             argOwnerName(),
@@ -205,8 +203,7 @@ object CommandGroupStorageEdit {
         )
 
     private fun listCommand(): CommandAPICommand = CommandAPICommand("list")
-        .withPermission(CommandPermission.NONE)
-        .withPermission("groupstorageedit.list")
+        .withPermission("smartstorage.groupstorageedit.list")
         .executesPlayer(
             PlayerCommandExecutor { sender, _ ->
                 sender.sendMessage(

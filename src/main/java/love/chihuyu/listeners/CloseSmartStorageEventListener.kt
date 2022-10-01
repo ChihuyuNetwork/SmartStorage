@@ -19,6 +19,6 @@ object CloseSmartStorageEventListener : Listener {
 
 
         SqliteWrapper.save(storage)
-        event.player.sendMessage("${ChatColor.GREEN}[SmartStorage] Storage saved.")
+//        event.player.sendMessage("${ChatColor.GREEN}[SmartStorage] Storage saved.")
     }
 }

@@ -20,6 +20,10 @@ object SmartStorageTable : Table() {
 
 object SqliteWrapper {
     fun initialize() {
+        val dataFolder = File(plugin.dataFolder.path)
+        if (!dataFolder.exists()) {
+            dataFolder.mkdir()
+        }
         val file = File(plugin.dataFolder, "smart-storage.db")
         if (!file.exists()) {
             file.createNewFile()

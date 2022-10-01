@@ -50,7 +50,7 @@ object ClickPaginationButtonEventListener : Listener {
                 if (currentIndex.inc() == inventories.size) {
                     if (inventory.contents.filterNotNull().size <= 2) {
                         player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1f)
-                        player.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RESET}Hint: new page will not created if there is no item in the current page.")
+//                        player.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RESET}Hint: new page will not created if there is no item in the current page.")
                         player.openInventory(inventories.first())
                         return
                     }
