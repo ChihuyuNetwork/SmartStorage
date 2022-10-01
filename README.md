@@ -43,20 +43,20 @@ use /personalstorage
 * `smartstorage.groupstorage`  
 use /groupstorage
 
-* `groupstorageedit.create`  
+* `smartstorage.groupstorageedit.create`  
 use /gsedit create
 
-* `groupstorageedit.delete`  
+* `smartstorage.groupstorageedit.delete`  
 use /gsedit delete
 
-* `groupstorageedit.addmember`  
+* `smartstorage.groupstorageedit.addmember`  
 use /gsedit addmember
 
-* `groupstorageedit.removemember`  
+* `smartstorage.groupstorageedit.removemember`  
 use /gsedit removemember
 
-* `groupstorageedit.list`  
+* `smartstorage.groupstorageedit.list`  
 use /gsedit list
 
-* `smartstorage.save`  
+* `smartstorage.smartstorage`  
 use /smartstorage save
