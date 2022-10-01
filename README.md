@@ -1,4 +1,5 @@
 # SmartStorage
+A cloud storage for group, personal, everyone.
 
 ## Depends
 [CommandAPI](https://www.spigotmc.org/resources/api-commandapi-1-13-1-19-2.62353/)
