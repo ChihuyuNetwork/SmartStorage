@@ -1,5 +1,8 @@
 # SmartStorage
 
+## Depends
+[CommandAPI](https://www.spigotmc.org/resources/api-commandapi-1-13-1-19-2.62353/)
+
 ## Commands
 
 * `/serverstorage[ss]`  
