@@ -1,7 +1,6 @@
 package love.chihuyu.commands
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
@@ -9,6 +8,10 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import love.chihuyu.storage.StorageManager
 import love.chihuyu.storage.StorageType.GROUP
 import love.chihuyu.wrappers.SqliteWrapper
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -22,6 +25,7 @@ object CommandGroupStorageEdit {
         .withSubcommands(
             createCommand(),
             deleteCommand(),
+            forceDeleteCommand(),
             addMemberCommand(),
             removeMemberCommand(),
             listCommand()
@@ -100,6 +104,45 @@ object CommandGroupStorageEdit {
 
     private fun deleteCommand(): CommandAPICommand = CommandAPICommand("delete")
         .withPermission("smartstorage.groupstorageedit.delete")
+        .withArguments(StringArgument("storageNameThatYouOwn")
+            .replaceSuggestions(
+                ArgumentSuggestions.strings { info ->
+                    CompletableFuture.supplyAsync {
+                        StorageManager.storages.filter {
+                            ((it.storageType == GROUP)
+                                    && it.ownerUUID ==
+                                    Bukkit.getOfflinePlayers()
+                                        .firstOrNull { it2 -> it2.name.equals(info.sender.name) }?.uniqueId
+                                    )
+                        }.map { it.storageName }.toTypedArray()
+                    }.get()
+                }))
+        .executesPlayer(
+            PlayerCommandExecutor { sender, args ->
+                val storageName = args[0] as String
+                val ownerUUID = sender.uniqueId
+                val storage = StorageManager.storages.firstOrNull {
+                    it.storageType == GROUP
+                            && it.ownerUUID == ownerUUID
+                            && it.storageName == storageName
+                }
+
+                if (storage == null) {
+                    sender.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}The storage does not exist.")
+                    return@PlayerCommandExecutor
+                }
+
+                sender.spigot().sendMessage(
+                    TextComponent("${net.md_5.bungee.api.ChatColor.GREEN}[SmartStorage] ${net.md_5.bungee.api.ChatColor.RED}Storage can't restore. Are you sure? ${net.md_5.bungee.api.ChatColor.BOLD}[Confirm]").apply {
+                        this.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gsedit forcedelete $storageName")
+                        this.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("Click to remove storage"))
+                    }
+                )
+            }
+        )
+
+    private fun forceDeleteCommand(): CommandAPICommand = CommandAPICommand("forcedelete")
+        .withPermission("smartstorage.groupstorageedit.forcedelete")
         .withArguments(StringArgument("storageNameThatYouOwn")
             .replaceSuggestions(
             ArgumentSuggestions.strings { info ->
@@ -204,6 +247,11 @@ object CommandGroupStorageEdit {
 
                 if (storage == null) {
                     sender.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}The storage does not exist.")
+                    return@PlayerCommandExecutor
+                }
+
+                if (targetPlayer.uniqueId == ownerUUID) {
+                    sender.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}Can't remove owner from members.")
                     return@PlayerCommandExecutor
                 }
 
