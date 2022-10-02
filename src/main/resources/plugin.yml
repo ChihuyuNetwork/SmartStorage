@@ -1,8 +1,6 @@
 name: SmartStorage
-version: '2.0.2'
+version: '2.0.3'
 api-version: 1.19
 depend: [CommandAPI]
 main: love.chihuyu.SmartStorage
 authors: [ "Hirosuke", "Tenzyu Masuda", "Yuki Hiragino" ]
-commands:
-permissions:

@@ -59,7 +59,15 @@ object CommandGroupStorageEdit {
 
     private fun argTargetPlayerName() =
         OfflinePlayerArgument("targetPlayerName").replaceSuggestions(ArgumentSuggestions.strings {
-            Bukkit.getOfflinePlayers().map { it.name }.toTypedArray()
+            Bukkit.getOfflinePlayers().mapNotNull { it.name }.toTypedArray()
+        })
+
+    private fun argTargetMemberName() =
+        OfflinePlayerArgument("targetPlayerName").replaceSuggestions(ArgumentSuggestions.strings { info ->
+                (StorageManager.storages.firstOrNull {
+                    it.storageName == info.previousArgs[0] as String
+                            && it.ownerUUID == (info.previousArgs[1] as OfflinePlayer).uniqueId
+                }?.memberUUIDs?.mapNotNull { Bukkit.getOfflinePlayer(it).name } ?: listOf()).toTypedArray()
         })
 
     private fun createCommand(): CommandAPICommand = CommandAPICommand("create")
@@ -161,6 +169,11 @@ object CommandGroupStorageEdit {
                     return@PlayerCommandExecutor
                 }
 
+                if ("${targetPlayer.name}" == "null") {
+                    sender.sendMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}The player is not valid.")
+                    return@PlayerCommandExecutor
+                }
+
                 val result = storage.memberUUIDs.add(targetPlayer.uniqueId)
                 val message =
                     if (result) "${ChatColor.GREEN}[SmartStorage] ${targetPlayer.name} has been added to the storage."
@@ -174,7 +187,7 @@ object CommandGroupStorageEdit {
         .withArguments(
             argMemberStorageName(),
             argOwnerName(),
-            argTargetPlayerName(),
+            argTargetMemberName(),
         )
         .executesPlayer(
             PlayerCommandExecutor { sender, args ->
@@ -194,7 +207,7 @@ object CommandGroupStorageEdit {
                     return@PlayerCommandExecutor
                 }
 
-                val result = storage.memberUUIDs.add(targetPlayer.uniqueId)
+                val result = storage.memberUUIDs.remove(targetPlayer.uniqueId)
                 val message =
                     if (result) "${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}The player has been removed from the storage."
                     else "${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}An error occurred while removing the player from the storage."
