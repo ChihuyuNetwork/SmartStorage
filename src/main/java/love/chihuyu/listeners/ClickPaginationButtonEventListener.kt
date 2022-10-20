@@ -23,7 +23,6 @@ object ClickPaginationButtonEventListener : Listener {
         val inventory = event.clickedInventory ?: return
         val player = event.whoClicked as? Player ?: return
 
-
         val storage =
             StorageManager.inventories.firstNotNullOfOrNull { (id, inventories) ->
                 if (inventories.contains(inventory)) StorageManager.storages.firstOrNull { it.id == id } else null
