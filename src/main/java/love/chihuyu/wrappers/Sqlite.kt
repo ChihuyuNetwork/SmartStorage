@@ -11,6 +11,7 @@ import java.util.*
 
 object SmartStorageTable : Table() {
     val id = integer("id").autoIncrement().primaryKey()
+    //TODO storageTypeをenumeration化する
     val storageType = text("storage_type") // "server" | "personal" | "group"
     val storageName = text("storage_name").nullable()
     val ownerUUID = uuid("owner_uuid").nullable()
