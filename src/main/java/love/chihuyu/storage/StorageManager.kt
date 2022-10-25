@@ -18,7 +18,9 @@ object StorageManager {
         }
         val pages = itemStacks.chunked(52).mapIndexed { index, page ->
             Bukkit.createInventory(null, 54, "$storageName  Page ${index.inc()}")
-                .apply { addItem(*page.toTypedArray()) }
+                .apply {
+                    page.forEachIndexed {index, item -> setItem(index, item)}
+                }
         }
 
         if (pages.isEmpty()) {

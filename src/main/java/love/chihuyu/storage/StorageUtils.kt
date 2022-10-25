@@ -13,8 +13,12 @@ fun List<ItemStack?>.excludePaginationButtonAndNull(): List<ItemStack> {
     return this.filterNotNull().filterNot { it.isPaginationButton() }
 }
 
+fun List<ItemStack?>.excludePaginationButton(): List<ItemStack?> {
+    return this.filterNot { it?.isPaginationButton() ?: false }
+}
+
 @Throws(IllegalStateException::class)
-fun arrayToBase64(itemStacks: Array<ItemStack>): String {
+fun arrayToBase64(itemStacks: Array<ItemStack?>): String {
     try {
         val stream = ByteArrayOutputStream()
         val bukkitStream = BukkitObjectOutputStream(stream)
@@ -37,7 +41,7 @@ fun arrayToBase64(itemStacks: Array<ItemStack>): String {
 
 // NOTE: 何かが破損していたらココを確認しよう
 @Throws(IOException::class)
-fun listFromBase64(data: String): List<ItemStack> {
+fun listFromBase64(data: String): List<ItemStack?> {
     try {
         val buffer = Base64Coder.decodeLines(data)
         val stream = ByteArrayInputStream(buffer)
@@ -46,11 +50,16 @@ fun listFromBase64(data: String): List<ItemStack> {
         val bukkitStream = BukkitObjectInputStream(stream)
         val items = arrayOfNulls<ItemStack>(bukkitStream.readInt())
         items.indices.forEach {
-            items[it] = bukkitStream.readObject() as ItemStack
+            val obj = bukkitStream.readObject()
+            items[it] = if (obj == null) {
+                null
+            }
+            else{
+               obj as ItemStack
+            }
         }
         bukkitStream.close()
-
-        return items.filterNotNull().toList()
+        return items.toList()
     } catch (e: ClassNotFoundException) {
         throw IOException("Unable to decode class type.", e)
     }
