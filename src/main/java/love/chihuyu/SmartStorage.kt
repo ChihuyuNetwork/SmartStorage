@@ -29,7 +29,9 @@ class SmartStorage : JavaPlugin(), Listener {
 
         CommandSmartStorage.main.register()
         CommandServerStorage.main.register()
+        CommandServerStorage.withPages.register()
         CommandPersonalStorage.main.register()
+        CommandPersonalStorage.withPages.register()
         CommandGroupStorage.main.register()
         CommandGroupStorageEdit.main.register()
 
