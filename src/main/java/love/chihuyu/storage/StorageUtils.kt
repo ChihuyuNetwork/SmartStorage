@@ -50,12 +50,8 @@ fun listFromBase64(data: String): List<ItemStack?> {
         val bukkitStream = BukkitObjectInputStream(stream)
         val items = arrayOfNulls<ItemStack>(bukkitStream.readInt())
         items.indices.forEach {
-            val obj = bukkitStream.readObject()
-            items[it] = if (obj == null) {
-                null
-            }
-            else{
-               obj as ItemStack
+            items[it] = bukkitStream.readObject()?.let { itemStack ->
+                itemStack as ItemStack
             }
         }
         bukkitStream.close()
