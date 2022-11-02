@@ -94,8 +94,11 @@ object SqliteWrapper {
     fun save(storage: SmartStorage) = transaction {
         val inventories = StorageManager.inventories[storage.id] ?: return@transaction
 
-        val itemStacks = mutableListOf<ItemStack>()
-        inventories.forEach { itemStacks.addAll(it.contents.asList().excludePaginationButtonAndNull()) }
+        val itemStacks = mutableListOf<ItemStack?>()
+        inventories.forEach {
+            val lst = it.contents.asList().excludePaginationButton().dropLastWhile { itemStack -> itemStack == null };
+            itemStacks.addAll(lst)
+        }
 
         SmartStorageTable.update({ SmartStorageTable.id eq storage.id }) {
             it[storageType] = storage.storageType.toString()
@@ -109,8 +112,10 @@ object SqliteWrapper {
     fun saveAll() = transaction {
         StorageManager.inventories.forEach { (id, inventories) ->
             val smartStorage = StorageManager.storages.firstOrNull { it.id == id } ?: return@forEach
-            val itemStacks = mutableListOf<ItemStack>()
-            inventories.forEach { itemStacks.addAll(it.contents.asList().excludePaginationButtonAndNull()) }
+            val itemStacks = mutableListOf<ItemStack?>()
+            inventories.forEach { itemStacks.addAll(it.contents.asList()
+                .excludePaginationButton().dropLastWhile { itemStack -> itemStack == null })
+            }
 
             SmartStorageTable.update({ SmartStorageTable.id eq smartStorage.id }) {
                 it[storageType] = smartStorage.storageType.toString()
