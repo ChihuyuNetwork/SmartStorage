@@ -8,7 +8,6 @@ import love.chihuyu.storage.StorageManager
 import love.chihuyu.storage.StorageType
 import love.chihuyu.storage.nextPageButton
 import love.chihuyu.storage.previousPageButton
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 object CommandGroupStorageOpenCommand {
