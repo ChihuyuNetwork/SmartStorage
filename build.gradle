@@ -24,7 +24,7 @@ dependencies {
     compileOnly "dev.jorel:commandapi-core:8.5.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.exposed:exposed:0.17.14"
-    implementation "org.xerial:sqlite-jdbc:3.39.3.0"
+    implementation 'org.xerial:sqlite-jdbc:3.39.4.1'
 }
 
 def targetJavaVersion = 17
