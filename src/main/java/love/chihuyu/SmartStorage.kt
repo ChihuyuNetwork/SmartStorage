@@ -35,6 +35,7 @@ class SmartStorage : JavaPlugin(), Listener {
         CommandPersonalStorageOpen.main.register()
         CommandGroupStorage.main.register()
         CommandGroupStorageEdit.main.register()
+        CommandGroupStorageOpenCommand.main.register()
 
         server.pluginManager.registerEvents(ClickStorageHeadEventListener, this)
         server.pluginManager.registerEvents(ClickPaginationButtonEventListener, this)
