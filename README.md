@@ -12,8 +12,14 @@ open server storage.
 * `/personalstorage[ps]`  
 open your private storage.
 
+* `/personalstorageopen[pso]`  
+make player to open personal storage.
+
 * `/groupstorage[gs]`  
 open group storage.
+
+* `/groupstorageopen[gso] <player> <storage>`  
+make player to open `storage`.
 
 * `/gsedit[gse] create <storageName>`  
 create new group storage.
@@ -41,8 +47,14 @@ use /serverstorage
 * `smartstorage.personalstorage`  
 use /personalstorage
 
+* `smartstorage.personalstorageopen`  
+use /personalstorageopen
+
 * `smartstorage.groupstorage`  
 use /groupstorage
+
+* `smartstorage.groupstorageopen`  
+use /groupstorageopen
 
 * `smartstorage.groupstorageedit.create`  
 use /gsedit create
