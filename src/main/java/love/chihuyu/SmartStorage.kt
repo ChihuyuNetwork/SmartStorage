@@ -24,6 +24,8 @@ class SmartStorage : JavaPlugin(), Listener {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
+
         SqliteWrapper.initialize()
         SqliteWrapper.import()
 
