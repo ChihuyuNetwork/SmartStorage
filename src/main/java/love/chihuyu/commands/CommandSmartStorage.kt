@@ -3,7 +3,6 @@ package love.chihuyu.commands
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandPermission
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
-import love.chihuyu.SmartStorage
 import love.chihuyu.SmartStorage.Companion.plugin
 import love.chihuyu.wrappers.SqliteWrapper
 import org.bukkit.ChatColor
@@ -17,7 +16,7 @@ object CommandSmartStorage {
         .withPermission(CommandPermission.OP)
         .executesPlayer(PlayerCommandExecutor { sender, _ ->
             try {
-                plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Saving data...")
+                if (!plugin.config.getBoolean("mute-saved-alert")) plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Saving data...")
 
                 val file = File(plugin.dataFolder, "smart-storage.db")
                 val tmpFileName = "smart-storage-tmp-${SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Date())}.db"
@@ -26,7 +25,7 @@ object CommandSmartStorage {
                 SqliteWrapper.saveAll()
                 tmpFile.delete()
 
-                plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Save completed successfully!")
+                if (!plugin.config.getBoolean("mute-saved-alert")) plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Save completed successfully!")
             } catch (e: Exception) {
                 e.printStackTrace()
                 plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}Failed to save data, please contact the administrator!")

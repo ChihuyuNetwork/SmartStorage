@@ -24,6 +24,8 @@ class SmartStorage : JavaPlugin(), Listener {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
+
         SqliteWrapper.initialize()
         SqliteWrapper.import()
 
@@ -45,7 +47,7 @@ class SmartStorage : JavaPlugin(), Listener {
         val hour = 20 * 60 * 60.toLong()
         runTaskTimer(/* delay = */ hour, /* intervalTicks = */ hour) {
             try {
-                plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Saving data...")
+                if (!config.getBoolean("mute-saved-alert")) plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Saving data...")
 
                 val file = File(plugin.dataFolder, "smart-storage.db")
                 val tmpFileName = "smart-storage-tmp-${SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Date())}.db"
@@ -54,7 +56,7 @@ class SmartStorage : JavaPlugin(), Listener {
                 SqliteWrapper.saveAll()
                 tmpFile.delete()
 
-                plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Save completed successfully!")
+                if (!config.getBoolean("mute-saved-alert")) plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] Save completed successfully!")
             } catch (e: Exception) {
                 e.printStackTrace()
                 plugin.server.broadcastMessage("${ChatColor.GREEN}[SmartStorage] ${ChatColor.RED}Failed to save data, please contact the administrator!")

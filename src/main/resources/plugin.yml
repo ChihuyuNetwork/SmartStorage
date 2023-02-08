@@ -1,5 +1,5 @@
 name: SmartStorage
-version: '2.3.0'
+version: '2.4.0'
 api-version: 1.19
 depend: [CommandAPI]
 main: love.chihuyu.SmartStorage
