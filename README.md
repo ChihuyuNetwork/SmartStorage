@@ -4,72 +4,46 @@ A cloud storage for group, personal, everyone.
 ## Depends
 * [CommandAPI](https://www.spigotmc.org/resources/api-commandapi-1-13-1-19-2.62353/)
 
-## Commands
+## Commands && Permissions
 
-* `/serverstorage[ss]`  
+* `/serverstorage[ss]` : `smartstorage.serverstorage`  
 open server storage.
 
-* `/personalstorage[ps]`  
+* `/personalstorage[ps]` : `smartstorage.personalstorage`  
 open your private storage.
 
-* `/personalstorageopen[pso]`  
+* `/personalstorageopen[pso]` : `smartstorage.personalstorageopen`  
 make player to open personal storage.
 
-* `/groupstorage[gs]`  
+* `/groupstorage[gs]` : `smartstorage.groupstorage`  
 open group storage.
 
-* `/groupstorageopen[gso] <player> <storage>`  
+* `/groupstorageopen[gso] <player> <storage>` : `smartstorage.groupstorageopen`  
 make player to open `storage`.
 
-* `/gsedit[gse] create <storageName>`  
+* `/gsedit[gse] create <storageName>` : `smartstorage.groupstorageedit.create`  
 create new group storage.
 
-* `/gsedit[gse] delete <storageName>`  
+* `/gsedit[gse] delete <storageName>` : `smartstorage.groupstorageedit.delete`  
 delete group storage that you created. (Don't forget to collect items in storage before delete.)
 
-* `/gsedit[gse] addmember <storageName> <owner> <member>`  
+* `/gsedit[gse] addmember <storageName> <owner> <member>` : `smartstorage.groupstorageedit.addmember`  
 add `member` to specify storage's member.
 
-* `/gsedit[gse] removemember <storageName> <owner> <member>`  
+* `/gsedit[gse] removemember <storageName> <owner> <member>` : `smartstorage.groupstorageedit.removemember`  
 remove `member` from specify storage's member.
 
-* `/gsedit[gse] list`  
+* `/gsedit[gse] list` : `smartstorage.groupstorageedit.list`  
 show joined group storages.
 
-* `/smartstorage save`  
+* `/smartstorage save` : `smartstorage.smartstorage.save`  
 save storage data to file. (OP only)
 
-## Permissions
+## Config
 
-* `smartstorage.serverstorage`  
-use /serverstorage
+```
+mute-save-alert: false
+```
 
-* `smartstorage.personalstorage`  
-use /personalstorage
-
-* `smartstorage.personalstorageopen`  
-use /personalstorageopen
-
-* `smartstorage.groupstorage`  
-use /groupstorage
-
-* `smartstorage.groupstorageopen`  
-use /groupstorageopen
-
-* `smartstorage.groupstorageedit.create`  
-use /gsedit create
-
-* `smartstorage.groupstorageedit.delete`  
-use /gsedit delete
-
-* `smartstorage.groupstorageedit.addmember`  
-use /gsedit addmember
-
-* `smartstorage.groupstorageedit.removemember`  
-use /gsedit removemember
-
-* `smartstorage.groupstorageedit.list`  
-use /gsedit list
-
-* `smartstorage.smartstorage`  
-use /smartstorage save
+* `mute-save-alert`  
+Mute interval saving alert.
